@@ -1,6 +1,7 @@
 /*jshint esversion: 6*/
 //load database
 var Datastore = require('nedb');
+const cron = require('node-cron');
 var path = require("path");
 
 exports.db_folder = process.env.CRON_DB_PATH === undefined ? path.join(__dirname,  "crontabs") : process.env.CRON_DB_PATH;
@@ -24,7 +25,8 @@ var exec = require('child_process').exec;
 var fs = require('fs');
 var cron_parser = require("cron-parser");
 var cronstrue = require('cronstrue/i18n');
-var humanCronLocate = process.env.HUMANCRON ?? "en"
+var humanCronLocate = process.env.HUMANCRON ?? "en";
+const Jobs={};
 
 if (!fs.existsSync(exports.log_folder)){
     fs.mkdirSync(exports.log_folder);
@@ -65,6 +67,12 @@ exports.status = function(_id, stopped){
 
 exports.remove = function(_id){
 	db.remove({_id: _id}, {});
+	if(Jobs[_id]){
+		Jobs[_id].stop();
+		delete Jobs[_id];
+		console.log("====================删除job"+_id);
+	}
+	
 };
 
 // Iterates through all the crontab entries in the db and calls the callback with the entries
@@ -81,7 +89,9 @@ exports.crontabs = function(callback){
 					console.error(err);
 					docs[i].next = "invalid";
 				}
+			
 		}
+		
 		callback(docs);
 	});
 };
@@ -97,21 +107,34 @@ exports.runjob = function(_id) {
 		let res = docs[0];
 
 		let env_vars = exports.get_env()
-
+		console.log(JSON.stringify(res) );
 		let crontab_job_string_command = make_command(res)
 
 		crontab_job_string_command = add_env_vars(env_vars, crontab_job_string_command)
-
-		console.log("Running job")
+		debugger
+		console.log("Running jobxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"+res.schedule)
 		console.log("ID: " + _id)		
 		console.log("Original command: " + res.command)
 		console.log("Executed command: " + crontab_job_string_command)
-
-		exec(crontab_job_string_command, function(error, stdout, stderr){
-			if (error) {
-				console.log(error)
-			}
-		});
+		const job=cron.schedule(res.schedule, () => {
+			console.log('执行定时任务...'+res.command);
+			// 这里放置你的任务逻辑
+				// exec(res.command, function(error, stdout, stderr){
+				// 	if (error) {
+				// 		console.log(error)
+				// 	}else{
+				// 		console.log(stdout );
+				// 		console.log(stderr )
+				// 	}
+				// });
+		  });
+		  job.start();
+		  Jobs[_id]=job;
+		// exec(crontab_job_string_command, function(error, stdout, stderr){
+		// 	if (error) {
+		// 		console.log(error)
+		// 	}
+		// });
 	});
 };
 
