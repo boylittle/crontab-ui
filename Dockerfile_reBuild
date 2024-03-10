@@ -1,0 +1,5 @@
+docker stop myrunname
+docker rm myrunname
+docker build -t alseambusher/crontab-ui .
+docker run --name "myrunname" -d -p 8000:8000 alseambusher/crontab-ui
+echo "success"
