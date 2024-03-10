@@ -5,19 +5,21 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "test": "node tests/test.js"
+    "test": "node tests/test.js",
+    "pushDocker": "docker cp . myrunname:crontab-ui"
   },
   "dependencies": {
     "body-parser": "latest",
     "connect-busboy": "latest",
     "cron-parser": "latest",
-    "cronstrue": "latest",
+    "cronstrue": "^2.48.0",
     "ejs": "latest",
     "express": "latest",
     "express-basic-auth": "^1.2.0",
     "mime-types": "latest",
     "moment": "latest",
-    "nedb": "latest",
+    "nedb": "^1.8.0",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.7.3"
   },
   "engines": {
