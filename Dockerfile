@@ -1,4 +1,14 @@
+#下载docker 客户端
+# docker build -t alseambusher/crontab-ui .
 # docker run -d -p 8000:8000 alseambusher/crontab-ui
+# 指定容器名称启动
+#docker run --name "myrunname"  -d -p 8000:8000 "alseambusher/crontab-ui"
+# 查看容器名称
+# docker ps -a --format '{{.Names}}'
+#停止容器 运行
+#docker stop myrunname
+#docker copy 宿主文件到 容器
+#docker cp . myrunname:crontab-ui
 FROM alpine:3.15.3
 
 ENV   CRON_PATH /etc/crontabs
