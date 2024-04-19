@@ -1,4 +1,6 @@
-#下载docker 客户端
+#wsl --update
+#https://blog.csdn.net/qq_35764295/article/details/129907447
+
 # docker build -t alseambusher/crontab-ui .
 # docker run -d -p 8000:8000 alseambusher/crontab-ui
 # 指定容器名称启动
